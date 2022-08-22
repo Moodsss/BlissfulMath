@@ -1,0 +1,38 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "moodss.bm.mixins",
+  "plugin": "moodss.bm.mixins.BlissfulMathMixinConfigPlugin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "client.ParticleUtilMixin",
+    "client.QuaternionMixin",
+    "client.matrix.Matrix3fAccessor",
+    "client.matrix.Matrix3fMixin",
+    "client.matrix.Matrix4fAccessor",
+    "client.matrix.Matrix4fMixin",
+    "client.vec.Vec2fMixin",
+    "client.vec.Vec3dMixin",
+    "client.vec.Vec3fMixin",
+    "server.BoxMixin",
+    "server.DirectionMixin",
+    "server.HitResultMixin",
+    "server.MathHelperMixin",
+    "server.vec.Vec3iMixin",
+    "server.vec.Vector4fMixin"
+  ],
+  "client": [
+    "client.animation.AnimationHelperMixin",
+    "client.gl.GlProgramManagerMixin",
+    "client.gl.GlStateManagerMixin",
+    "client.gl.GlTimerQueryMixin",
+    "client.model.BipedEntityModelMixin",
+    "client.model.CrossbowPosingMixin",
+    "client.model.EvokerFangsEntityModelMixin",
+    "client.model.ModelUtilMixin",
+    "client.model.QuadrupedEntityModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "bm",
+  "version": "${version}",
+  "name": "BlissfulMath",
+  "description": "Blissful math, adding fast paths and up-to-date methods and functions to core functions",
+  "authors": [
+    "Mo0dss"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/bm/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "moodss.bm.BlissfulMath"
+    ]
+  },
+  "mixins": [
+    "bm.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "fabric": "*",
+    "minecraft": "1.19.2"
+  }
+}
