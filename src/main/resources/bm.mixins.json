@@ -22,10 +22,8 @@
     "server.vec.Vector4fMixin"
   ],
   "client": [
-    "client.animation.AnimationHelperMixin",
     "client.gl.GlProgramManagerMixin",
     "client.gl.GlStateManagerMixin",
-    "client.gl.GlTimerQueryMixin",
     "client.model.BipedEntityModelMixin",
     "client.model.CrossbowPosingMixin",
     "client.model.EvokerFangsEntityModelMixin",

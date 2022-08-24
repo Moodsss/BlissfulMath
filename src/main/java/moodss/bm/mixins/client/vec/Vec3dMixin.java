@@ -1,15 +1,15 @@
 package moodss.bm.mixins.client.vec;
 
 import moodss.bm.MathUtils;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Vec3d.class)
+@Mixin(Vec3.class)
 public class Vec3dMixin
 {
     @Shadow
@@ -29,18 +29,18 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3d normalize()
+    public Vec3 normalize()
     {
         double length = this.length();
 
         if(length < 1.0E-4)
         {
-            return Vec3d.ZERO;
+            return Vec3.ZERO;
         }
 
         double norm = 1F / length;
 
-        return new Vec3d(this.x * norm, this.y * norm, this.z * norm);
+        return new Vec3(this.x * norm, this.y * norm, this.z * norm);
     }
 
     /**
@@ -48,7 +48,7 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double dotProduct(Vec3d vec)
+    public double dot(Vec3 vec)
     {
         return MathUtils.fma(this.x, vec.x, MathUtils.fma(this.y, vec.y, this.z * vec.z));
     }
@@ -58,9 +58,9 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3d crossProduct(Vec3d vec)
+    public Vec3 cross(Vec3 vec)
     {
-        return new Vec3d(
+        return new Vec3(
                 MathUtils.fmn(this.y, vec.z, this.z * vec.y),
                 MathUtils.fmn(this.z, vec.x, this.x * vec.z),
                 MathUtils.fmn(this.x, vec.y, this.y * vec.x));
@@ -71,9 +71,9 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double distanceTo(Vec3d vec)
+    public double distanceTo(Vec3 vec)
     {
-        return Math.sqrt(this.squaredDistanceTo(vec));
+        return Math.sqrt(this.distanceToSqr(vec));
     }
 
     /**
@@ -81,7 +81,7 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double squaredDistanceTo(Vec3d vec)
+    public double distanceToSqr(Vec3 vec)
     {
         double x1 = vec.x - this.x;
         double y1 = vec.y - this.y;
@@ -95,7 +95,7 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double squaredDistanceTo(double x, double y, double z)
+    public double distanceToSqr(double x, double y, double z)
     {
         double x1 = x - this.x;
         double y1 = y - this.y;
@@ -111,7 +111,7 @@ public class Vec3dMixin
     @Overwrite
     public double length()
     {
-        return Math.sqrt(this.lengthSquared());
+        return Math.sqrt(this.lengthSqr());
     }
 
     /**
@@ -119,9 +119,9 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double lengthSquared()
+    public double lengthSqr()
     {
-        return this.dotProduct((Vec3d) (Object) this);
+        return this.dot((Vec3) (Object) this);
     }
 
     /**
@@ -129,9 +129,9 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double horizontalLength()
+    public double horizontalDistance()
     {
-        return Math.sqrt(this.horizontalLengthSquared());
+        return Math.sqrt(this.horizontalDistanceSqr());
     }
 
     /**
@@ -139,7 +139,7 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double horizontalLengthSquared()
+    public double horizontalDistanceSqr()
     {
         return MathUtils.fma(this.x, this.x, this.z * this.z);
     }
@@ -149,16 +149,16 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3d rotateX(float angle)
+    public Vec3 xRot(float angle)
     {
-        float cosAngle = MathHelper.cos(angle);
-        float sinAngle = MathHelper.sin(angle);
+        float cosAngle = Mth.cos(angle);
+        float sinAngle = Mth.sin(angle);
 
         double x = this.x;
         double y = MathUtils.fma(this.y, cosAngle, this.z * sinAngle);
         double z = MathUtils.fmn(this.z, cosAngle, this.y * sinAngle);
 
-        return new Vec3d(x, y, z);
+        return new Vec3(x, y, z);
     }
 
     /**
@@ -166,16 +166,16 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3d rotateY(float angle)
+    public Vec3 yRot(float angle)
     {
-        float cosAngle = MathHelper.cos(angle);
-        float sinAngle = MathHelper.sin(angle);
+        float cosAngle = Mth.cos(angle);
+        float sinAngle = Mth.sin(angle);
 
         double x = MathUtils.fma(this.x, cosAngle, this.z * sinAngle);
         double y = this.y;
         double z = MathUtils.fmn(this.z, cosAngle, this.x * sinAngle);
 
-        return new Vec3d(x, y, z);
+        return new Vec3(x, y, z);
     }
 
     /**
@@ -183,29 +183,15 @@ public class Vec3dMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3d rotateZ(float angle)
+    public Vec3 zRot(float angle)
     {
-        float cosAngle = MathHelper.cos(angle);
-        float sinAngle = MathHelper.sin(angle);
+        float cosAngle = Mth.cos(angle);
+        float sinAngle = Mth.sin(angle);
 
         double x = MathUtils.fma(this.x, cosAngle, this.y * sinAngle);
         double y = MathUtils.fmn(this.y, cosAngle, this.x * sinAngle);
         double z = this.z;
 
-        return new Vec3d(x, y, z);
-    }
-
-    /**
-     * @author Mo0dss
-     * @reason Introduce FMA
-     */
-    @Overwrite
-    public Vec3d withBias(Direction direction, double value)
-    {
-        double x1 = MathUtils.fma(value, direction.getOffsetX(), this.x);
-        double y1 = MathUtils.fma(value, direction.getOffsetY(), this.y);
-        double z1 = MathUtils.fma(value, direction.getOffsetZ(), this.z);
-
-        return new Vec3d(x1, y1, z1);
+        return new Vec3(x, y, z);
     }
 }

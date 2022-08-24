@@ -1,6 +1,6 @@
 package moodss.bm.util;
 
-import net.minecraft.util.Util;
+import net.minecraft.Util;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;

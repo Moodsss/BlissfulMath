@@ -1,7 +1,7 @@
 package moodss.bm;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import org.slf4j.Logger;
@@ -10,18 +10,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class BlissfulMath implements ModInitializer
+@Mod("bm")
+public class BlissfulMath
 {
     private static BlissfulMathConfig CONFIG;
     private static Logger LOGGER;
 
-    @Override
-    public void onInitialize()
-    {
+    public BlissfulMath() {
         LOGGER = LoggerFactory.getLogger("BlissfulMath");
 
-        var configPath = FabricLoader.getInstance()
-                .getConfigDir()
+        var configPath = FMLPaths.CONFIGDIR.get()
                 .resolve("blissful-math-config.json");
 
         loadConfig(configPath);

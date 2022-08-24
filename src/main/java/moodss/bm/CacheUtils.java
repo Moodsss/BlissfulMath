@@ -4,8 +4,6 @@ import it.unimi.dsi.fastutil.doubles.*;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import net.minecraft.client.world.BiomeColorCache;
-
 public class CacheUtils
 {
     public static Int2IntFunction memoize(final Int2IntFunction function)

@@ -1,15 +1,15 @@
 package moodss.bm.mixins.client.model;
 
 import moodss.bm.MathUtils;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.entity.model.AnimalModel;
-import net.minecraft.client.render.entity.model.QuadrupedEntityModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.AgeableListModel;
+import net.minecraft.client.model.QuadrupedModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.*;
 
-@Mixin(QuadrupedEntityModel.class)
-public abstract class QuadrupedEntityModelMixin<T extends Entity> extends AnimalModel<T>
+@Mixin(QuadrupedModel.class)
+public abstract class QuadrupedEntityModelMixin<T extends Entity> extends AgeableListModel<T>
 {
     @Shadow
     @Final
@@ -39,20 +39,20 @@ public abstract class QuadrupedEntityModelMixin<T extends Entity> extends Animal
      * @reason FMA & shortcuts
      */
     @Overwrite
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch)
+    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch)
     {
         float halfPi = (float) MathUtils.dividePi(180D);
 
-        this.head.pitch = headPitch * halfPi;
-        this.head.yaw = headYaw * halfPi;
+        this.head.yRot = headPitch * halfPi;
+        this.head.zRot = headYaw * halfPi;
 
-        float upperPitch = MathHelper.cos(limbAngle * NORM) * 1.4F * limbDistance;
-        float lowerPitch = MathHelper.cos((float) MathUtils.fma(limbAngle, NORM, Math.PI)) * 1.4F * limbDistance;
+        float upperPitch = Mth.cos(limbAngle * NORM) * 1.4F * limbDistance;
+        float lowerPitch = Mth.cos((float) MathUtils.fma(limbAngle, NORM, Math.PI)) * 1.4F * limbDistance;
 
-        this.rightHindLeg.pitch = upperPitch;
-        this.rightFrontLeg.pitch = lowerPitch;
+        this.rightHindLeg.xRot = upperPitch;
+        this.rightFrontLeg.xRot = lowerPitch;
 
-        this.leftHindLeg.pitch = lowerPitch;
-        this.leftFrontLeg.pitch = upperPitch;
+        this.leftHindLeg.xRot = lowerPitch;
+        this.leftFrontLeg.xRot = upperPitch;
     }
 }

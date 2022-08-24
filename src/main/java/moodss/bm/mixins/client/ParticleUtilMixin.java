@@ -1,18 +1,18 @@
 package moodss.bm.mixins.client;
 
 import moodss.bm.MathUtils;
-import net.minecraft.client.util.ParticleUtil;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.intprovider.UniformIntProvider;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.util.Mth;
+import net.minecraft.util.ParticleUtils;
+import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(ParticleUtil.class)
+@Mixin(ParticleUtils.class)
 public class ParticleUtilMixin
 {
     /**
@@ -20,10 +20,10 @@ public class ParticleUtilMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public static void spawnParticle(Direction.Axis axis, World world, BlockPos pos, double variance, ParticleEffect effect, UniformIntProvider range)
+    public static void spawnParticlesAlongAxis(Direction.Axis axis, Level world, BlockPos pos, double variance, ParticleOptions effect, UniformInt range)
     {
-        Vec3d vec = Vec3d.ofCenter(pos);
-        int distance = range.get(world.random);
+        Vec3 vec = Vec3.atCenterOf(pos);
+        int distance = range.sample(world.random);
 
         boolean offsetX = axis == Direction.Axis.X;
         boolean offsetY = axis == Direction.Axis.Y;
@@ -31,13 +31,13 @@ public class ParticleUtilMixin
 
         for(int i = 0; i < distance; i++)
         {
-            double x = MathUtils.fma(offsetX ? 0.5 : variance, MathHelper.nextDouble(world.random, -1.0, 1.0), vec.getX());
-            double y = MathUtils.fma(offsetY ? 0.5 : variance, MathHelper.nextDouble(world.random, -1.0, 1.0), vec.getY());
-            double z = MathUtils.fma(offsetZ ? 0.5 : variance, MathHelper.nextDouble(world.random, -1.0, 1.0), vec.getZ());
+            double x = MathUtils.fma(offsetX ? 0.5 : variance, Mth.nextDouble(world.random, -1.0, 1.0), vec.x());
+            double y = MathUtils.fma(offsetY ? 0.5 : variance, Mth.nextDouble(world.random, -1.0, 1.0), vec.y());
+            double z = MathUtils.fma(offsetZ ? 0.5 : variance, Mth.nextDouble(world.random, -1.0, 1.0), vec.z());
 
-            double motionX = offsetX ? MathHelper.nextDouble(world.random, -1.0, 1.0) : 0D;
-            double motionY = offsetY ? MathHelper.nextDouble(world.random, -1.0, 1.0) : 0D;
-            double motionZ = offsetZ ? MathHelper.nextDouble(world.random, -1.0, 1.0) : 0D;
+            double motionX = offsetX ? Mth.nextDouble(world.random, -1.0, 1.0) : 0D;
+            double motionY = offsetY ? Mth.nextDouble(world.random, -1.0, 1.0) : 0D;
+            double motionZ = offsetZ ? Mth.nextDouble(world.random, -1.0, 1.0) : 0D;
 
             world.addParticle(effect,
                     x, y, z,

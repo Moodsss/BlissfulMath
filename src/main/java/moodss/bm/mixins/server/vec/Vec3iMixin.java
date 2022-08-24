@@ -1,9 +1,8 @@
 package moodss.bm.mixins.server.vec;
 
 import moodss.bm.MathUtils;
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,14 +24,14 @@ public class Vec3iMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3i offset(Direction direction, int distance)
+    public Vec3i relative(Direction direction, int distance)
     {
         if(distance != 0)
         {
             return new Vec3i(
-                    MathUtils.fma(direction.getOffsetX(), distance, this.x),
-                    MathUtils.fma(direction.getOffsetY(), distance, this.y),
-                    MathUtils.fma(direction.getOffsetZ(), distance, this.z));
+                    MathUtils.fma(direction.getStepX(), distance, this.x),
+                    MathUtils.fma(direction.getStepY(), distance, this.y),
+                    MathUtils.fma(direction.getStepZ(), distance, this.z));
         }
 
         return (Vec3i) (Object) this;
@@ -43,7 +42,7 @@ public class Vec3iMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3i crossProduct(Vec3i vec)
+    public Vec3i cross(Vec3i vec)
     {
         return new Vec3i(
                 MathUtils.fmn(this.y, vec.getZ(), this.z * vec.getY()),
@@ -57,7 +56,7 @@ public class Vec3iMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double getSquaredDistanceFromCenter(double x, double y, double z)
+    public double distToCenterSqr(double x, double y, double z)
     {
         double x1 = this.x + 0.5D - x;
         double y1 = this.y + 0.5D - y;
@@ -71,7 +70,7 @@ public class Vec3iMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public double getSquaredDistance(double x, double y, double z)
+    public double distToLowCornerSqr(double x, double y, double z)
     {
         double x1 = this.x - x;
         double y1 = this.y - y;

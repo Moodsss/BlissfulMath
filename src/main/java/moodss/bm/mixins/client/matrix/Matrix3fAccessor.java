@@ -1,38 +1,38 @@
 package moodss.bm.mixins.client.matrix;
 
-import net.minecraft.util.math.Matrix3f;
+import com.mojang.math.Matrix3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(Matrix3f.class)
 public interface Matrix3fAccessor
 {
-    @Accessor("a00")
-    float getA00();
+    @Accessor("m00")
+    float getM00();
 
-    @Accessor("a01")
-    float getA01();
+    @Accessor("m01")
+    float getM01();
 
-    @Accessor("a02")
-    float getA02();
-
-
-    @Accessor("a10")
-    float getA10();
-
-    @Accessor("a11")
-    float getA11();
-
-    @Accessor("a12")
-    float getA12();
+    @Accessor("m02")
+    float getM02();
 
 
-    @Accessor("a20")
-    float getA20();
+    @Accessor("m10")
+    float getM10();
 
-    @Accessor("a21")
-    float getA21();
+    @Accessor("m11")
+    float getM11();
 
-    @Accessor("a22")
-    float getA22();
+    @Accessor("m12")
+    float getM12();
+
+
+    @Accessor("m20")
+    float getM20();
+
+    @Accessor("m21")
+    float getM21();
+
+    @Accessor("m22")
+    float getM22();
 }

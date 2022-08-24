@@ -1,13 +1,13 @@
 package moodss.bm.mixins.server;
 
 import moodss.bm.MathUtils;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(Box.class)
+@Mixin(AABB.class)
 public class BoxMixin
 {
     /**
@@ -16,7 +16,7 @@ public class BoxMixin
      */
     @Overwrite
     @Nullable
-    private static Direction traceCollisionSide(double[] traceDistanceResult, @Nullable Direction approachDirection,
+    private static Direction clipPoint(double[] traceDistanceResult, @Nullable Direction approachDirection,
                                                 double deltaX, double deltaY, double deltaZ, double begin,
                                                 double minX, double maxX,
                                                 double minZ, double maxZ,

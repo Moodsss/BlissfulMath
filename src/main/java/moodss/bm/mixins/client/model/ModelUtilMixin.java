@@ -1,12 +1,12 @@
 package moodss.bm.mixins.client.model;
 
 import moodss.bm.MathUtils;
-import net.minecraft.client.model.ModelUtil;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.ModelUtils;
+import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(ModelUtil.class)
+@Mixin(ModelUtils.class)
 public class ModelUtilMixin
 {
     /**
@@ -14,18 +14,18 @@ public class ModelUtilMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public static float interpolateAngle(float angleOne, float angleTwo, float progress)
+    public static float rotlerpRad(float angleOne, float angleTwo, float progress)
     {
-        float f = (progress - angleTwo) % MathHelper.TAU;
+        float f = (progress - angleTwo) % Mth.HALF_PI;
 
         if (f < -Math.PI)
         {
-            f += MathHelper.TAU;
+            f += Mth.HALF_PI;
         }
 
         if (f >= Math.PI)
         {
-            f -= MathHelper.TAU;
+            f -= Mth.HALF_PI;
         }
 
         return MathUtils.fma(angleOne, f, angleTwo);

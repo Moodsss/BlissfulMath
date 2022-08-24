@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import moodss.bm.MathUtils;
 import moodss.bm.util.NativeFloat;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.Util;
+import net.minecraft.util.Mth;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class Vector3 implements Externalizable
      */
     public static final Codec<Vector3> CODEC = Codec.FLOAT
             .listOf()
-            .comapFlatMap(quat -> Util.toArray(quat, 3).map(vec -> new Vector3(vec.get(0), vec.get(1), vec.get(2))), vec -> ImmutableList.of(vec.getX(), vec.getY(), vec.getZ()));
+            .comapFlatMap(quat -> Util.fixedSize(quat, 3).map(vec -> new Vector3(vec.get(0), vec.get(1), vec.get(2))), vec -> ImmutableList.of(vec.getX(), vec.getY(), vec.getZ()));
 
     /**
      * Returns a empty {@link #Vector3(float, float, float)}. (0,0,0)
@@ -195,7 +195,7 @@ public class Vector3 implements Externalizable
      */
     public float length()
     {
-        return MathHelper.fastInverseSqrt(this.lengthSquared());
+        return Mth.fastInvSqrt(this.lengthSquared());
     }
 
     /**

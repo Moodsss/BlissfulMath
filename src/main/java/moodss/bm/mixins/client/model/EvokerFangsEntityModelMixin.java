@@ -1,16 +1,16 @@
 package moodss.bm.mixins.client.model;
 
 import moodss.bm.MathUtils;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.entity.model.EvokerFangsEntityModel;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.EvokerFangsModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(EvokerFangsEntityModel.class)
+@Mixin(EvokerFangsModel.class)
 public class EvokerFangsEntityModelMixin<T extends Entity>
 {
     @Shadow
@@ -30,7 +30,7 @@ public class EvokerFangsEntityModelMixin<T extends Entity>
      * @reason Introduce FMA
      */
     @Overwrite
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch)
+    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch)
     {
         float f = limbAngle * 2.0F;
 
@@ -42,13 +42,13 @@ public class EvokerFangsEntityModelMixin<T extends Entity>
         //Cheapskate for f = 1.0F - f * f * f;
         f = MathUtils.fmn(f, f * f, 1.0F);
 
-        this.upperJaw.roll = (float) MathUtils.fmn(f * 0.35F, Math.PI, Math.PI);
-        this.lowerJaw.roll = (float) MathUtils.fma(f * 0.35F, Math.PI, Math.PI);
+        this.upperJaw.zRot = (float) MathUtils.fmn(f * 0.35F, Math.PI, Math.PI);
+        this.lowerJaw.zRot = (float) MathUtils.fma(f * 0.35F, Math.PI, Math.PI);
 
-        float pivotY = (limbAngle + MathHelper.sin(limbAngle * 2.7F)) * 0.6F * 12.0F;
+        float pivotY = (limbAngle + Mth.sin(limbAngle * 2.7F)) * 0.6F * 12.0F;
 
-        this.upperJaw.pivotY = 24.0F - pivotY;
-        this.lowerJaw.pivotY = this.upperJaw.pivotY;
-        this.base.pivotY = this.upperJaw.pivotY;
+        this.upperJaw.y = 24.0F - pivotY;
+        this.lowerJaw.y = this.upperJaw.y;
+        this.base.y = this.upperJaw.y;
     }
 }

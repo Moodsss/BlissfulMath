@@ -1,14 +1,14 @@
 package moodss.bm.mixins.client.vec;
 
 import moodss.bm.MathUtils;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec2;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Vec2f.class)
+@Mixin(Vec2.class)
 public class Vec2fMixin
 {
     @Shadow
@@ -24,7 +24,7 @@ public class Vec2fMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public float dot(Vec2f vec)
+    public float dot(Vec2 vec)
     {
         return MathUtils.fma(this.x, vec.x, this.y * vec.y);
     }
@@ -34,18 +34,18 @@ public class Vec2fMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec2f normalize()
+    public Vec2 normalized()
     {
         float length = this.length();
 
         if(length < 1.0E-4F)
         {
-            return Vec2f.ZERO;
+            return Vec2.ZERO;
         }
 
         float norm = 1F / length;
 
-        return new Vec2f(this.x * norm, this.y * norm);
+        return new Vec2(this.x * norm, this.y * norm);
     }
 
     /**
@@ -55,7 +55,7 @@ public class Vec2fMixin
     @Overwrite
     public float length()
     {
-        return MathHelper.sqrt(this.lengthSquared());
+        return Mth.sqrt(this.lengthSquared());
     }
 
     /**
@@ -73,7 +73,7 @@ public class Vec2fMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public float distanceSquared(Vec2f vec)
+    public float distanceToSqr(Vec2 vec)
     {
         float x1 = vec.x - this.x;
         float y1 = vec.y - this.y;

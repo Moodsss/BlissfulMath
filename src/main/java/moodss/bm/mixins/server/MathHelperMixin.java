@@ -1,13 +1,13 @@
 package moodss.bm.mixins.server;
 
 import moodss.bm.MathUtils;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(MathHelper.class)
+@Mixin(Mth.class)
 public abstract class MathHelperMixin
 {
     @Shadow
@@ -17,22 +17,21 @@ public abstract class MathHelperMixin
     }
 
     @Shadow
-    public static double fastInverseSqrt(double x)
-    {
+    @Final
+    private static double FRAC_BIAS;
+
+    @Shadow
+    @Final
+    private static double[] ASIN_TAB;
+
+    @Shadow
+    @Final
+    private static double[] COS_TAB;
+
+    @Shadow
+    public static double fastInvSqrt(double p_14194_) {
         return 0;
     }
-
-    @Shadow
-    @Final
-    private static double SMALLEST_FRACTION_FREE_DOUBLE;
-
-    @Shadow
-    @Final
-    private static double[] ARCSINE_TABLE;
-
-    @Shadow
-    @Final
-    private static double[] COSINE_TABLE;
 
     /**
      * @author Mo0dss
@@ -79,7 +78,7 @@ public abstract class MathHelperMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public static float lerpAngleDegrees(float delta, float start, float end)
+    public static float rotLerp(float delta, float start, float end)
     {
         return MathUtils.fma(delta, wrapDegrees(end - start), start);
     }
@@ -90,7 +89,7 @@ public abstract class MathHelperMixin
      */
     @Deprecated
     @Overwrite
-    public static float lerpAngle(float start, float end, float delta)
+    public static float rotlerp(float start, float end, float delta)
     {
         float value = end - start;
 
@@ -132,7 +131,7 @@ public abstract class MathHelperMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public static double squaredHypot(double a, double b)
+    public static double lengthSquared(double a, double b)
     {
         return MathUtils.fma(a, a, b * b);
     }
@@ -142,7 +141,7 @@ public abstract class MathHelperMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public static double squaredMagnitude(double a, double b, double c)
+    public static double lengthSquared(double a, double b, double c)
     {
         return MathUtils.fma(c, c, MathUtils.fma(b, b, a * a));
     }
@@ -181,17 +180,17 @@ public abstract class MathHelperMixin
             y = e;
         }
 
-        double dotSq = fastInverseSqrt(dot);
+        double dotSq = fastInvSqrt(dot);
         x *= dotSq;
         y *= dotSq;
 
-        double shiftedY = SMALLEST_FRACTION_FREE_DOUBLE + y;
+        double shiftedY = FRAC_BIAS + y;
         int bits = (int) Double.doubleToRawLongBits(shiftedY);
 
-        double arc = ARCSINE_TABLE[bits];
-        double cos = COSINE_TABLE[bits];
+        double arc = ASIN_TAB[bits];
+        double cos = COS_TAB[bits];
 
-        double shiftedBackY = shiftedY - SMALLEST_FRACTION_FREE_DOUBLE;
+        double shiftedBackY = shiftedY - FRAC_BIAS;
 
         double k = MathUtils.fmn(y, cos, x * shiftedBackY);
 
@@ -221,7 +220,7 @@ public abstract class MathHelperMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public static float fastInverseCbrt(float x)
+    public static float fastInvCubeRoot(float x)
     {
         int i = Float.floatToIntBits(x);
         i = 1419967116 - i / 3;

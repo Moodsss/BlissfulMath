@@ -1,25 +1,25 @@
 package moodss.bm.mixins.client.model;
 
 import moodss.bm.MathUtils;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.entity.model.AnimalModel;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Arm;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.model.AgeableListModel;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(BipedEntityModel.class)
-public abstract class BipedEntityModelMixin<T extends LivingEntity> extends AnimalModel<T>
+@Mixin(HumanoidModel.class)
+public abstract class BipedEntityModelMixin<T extends LivingEntity> extends AgeableListModel<T>
 {
     @Shadow
-    protected abstract Arm getPreferredArm(T entity);
+    protected abstract HumanoidArm getAttackArm(T entity);
 
     @Shadow
-    protected abstract ModelPart getArm(Arm arm);
+    protected abstract ModelPart getArm(HumanoidArm arm);
 
     @Shadow
     @Final
@@ -42,50 +42,50 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
      * @reason Introduce FMA
      */
     @Overwrite
-    public void animateArms(T entity, float animationProgress)
+    public void setupAttackAnimation(T entity, float animationProgress)
     {
-        if(this.handSwingProgress < 0)
+        if(this.attackTime < 0)
         {
             return;
         }
 
-        Arm arm = this.getPreferredArm(entity);
+        HumanoidArm arm = this.getAttackArm(entity);
         ModelPart part = this.getArm(arm);
 
-        float handSwingingProgress = this.handSwingProgress;
-        float handSwingingProgressSq = MathHelper.sqrt(handSwingingProgress);
+        float handSwingingProgress = this.attackTime;
+        float handSwingingProgressSq = Mth.sqrt(handSwingingProgress);
 
-        float bodyYawSin = MathHelper.sin(this.body.yaw) * 5.0F;
-        float bodyYawCos = MathHelper.cos(this.body.yaw) * 5.0F;
+        float bodyYawSin = Mth.sin(this.body.yRot) * 5.0F;
+        float bodyYawCos = Mth.cos(this.body.yRot) * 5.0F;
 
-        this.body.yaw = MathHelper.sin(handSwingingProgressSq * MathHelper.TAU) * 0.2F;
+        this.body.yRot = Mth.sin(handSwingingProgressSq * Mth.HALF_PI) * 0.2F;
 
-        if(arm == Arm.LEFT)
+        if(arm == HumanoidArm.LEFT)
         {
-            this.body.yaw *= -1F;
+            this.body.yRot *= -1F;
         }
 
-        this.rightArm.pivotZ = bodyYawSin;
-        this.rightArm.pivotX = -bodyYawCos;
+        this.rightArm.z = bodyYawSin;
+        this.rightArm.x = -bodyYawCos;
 
-        this.leftArm.pivotZ = -bodyYawSin;
-        this.leftArm.pivotX = bodyYawCos;
+        this.leftArm.z = -bodyYawSin;
+        this.leftArm.x = bodyYawCos;
 
-        this.rightArm.yaw += this.body.yaw;
-        this.leftArm.yaw += this.body.yaw;
+        this.rightArm.yRot += this.body.yRot;
+        this.leftArm.yRot += this.body.yRot;
 
-        this.leftArm.pitch += this.body.yaw;
+        this.leftArm.xRot += this.body.yRot;
 
-        handSwingingProgress = 1F - this.handSwingProgress;
+        handSwingingProgress = 1F - this.attackTime;
         handSwingingProgress *= handSwingingProgress * handSwingingProgress;
         handSwingingProgress = 1F - handSwingingProgress;
 
-        float handSwingingProgressPiSin = MathHelper.sin(handSwingingProgress * MathHelper.TAU);
-        float handSwingingProgressWithHead = MathHelper.sin(this.handSwingProgress * MathHelper.TAU) * -(this.head.pitch - 0.7F) * 0.75F;
+        float handSwingingProgressPiSin = Mth.sin(handSwingingProgress * Mth.HALF_PI);
+        float handSwingingProgressWithHead = Mth.sin(this.attackTime * Mth.HALF_PI) * -(this.head.xRot - 0.7F) * 0.75F;
 
-        part.pitch -= MathUtils.fma(handSwingingProgressPiSin, 1.2F, handSwingingProgressWithHead);
-        part.yaw += this.body.yaw * 2F;
-        part.roll += MathHelper.sin(this.handSwingProgress * MathHelper.TAU) * -0.4F;
+        part.xRot -= MathUtils.fma(handSwingingProgressPiSin, 1.2F, handSwingingProgressWithHead);
+        part.yRot += this.body.yRot * 2F;
+        part.zRot += Mth.sin(this.attackTime * Mth.HALF_PI) * -0.4F;
     }
 
     /**
@@ -93,18 +93,18 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
      * @reason Introduce FMA
      */
     @Overwrite
-    public float lerpAngle(float angleOne, float angleTwo, float magnitude)
+    public float rotlerpRad(float angleOne, float angleTwo, float magnitude)
     {
-        float f = (magnitude - angleTwo) % MathHelper.TAU;
+        float f = (magnitude - angleTwo) % Mth.HALF_PI;
 
         if (f < -Math.PI)
         {
-            f += MathHelper.TAU;
+            f += Mth.HALF_PI;
         }
 
         if (f >= Math.PI)
         {
-            f -= MathHelper.TAU;
+            f -= Mth.HALF_PI;
         }
 
         return MathUtils.fma(angleOne, f, angleTwo);
@@ -114,7 +114,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
      * @reason Introduce FMA
      */
     @Overwrite
-    private float method_2807(float f)
+    private float quadraticArmUpdate(float f)
     {
         return MathUtils.fma(-65F, f, f * f);
     }

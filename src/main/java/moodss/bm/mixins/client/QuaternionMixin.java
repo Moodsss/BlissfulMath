@@ -1,9 +1,9 @@
 package moodss.bm.mixins.client;
 
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import moodss.bm.MathUtils;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,41 +15,45 @@ import org.spongepowered.asm.mixin.Shadow;
 public class QuaternionMixin
 {
     @Shadow
-    private float x;
+    //X
+    private float i;
 
     @Shadow
-    private float y;
+    //Y
+    private float j;
 
     @Shadow
-    private float z;
+    //Z
+    private float k;
 
     @Shadow
-    private float w;
+    //W
+    private float r;
 
     /**
      * @author Mo0dss
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3f toEulerYxz()
+    public Vector3f toYXZ()
     {
-        float wSq = this.w * this.w;
-        float xSq = this.x * this.x;
-        float ySq = this.y * this.y;
-        float zSq = this.z * this.z;
+        float wSq = this.r * this.r;
+        float xSq = this.i * this.i;
+        float ySq = this.j * this.j;
+        float zSq = this.k * this.k;
         float dot = wSq + xSq + ySq + zSq;
-        float size = 2.0F * MathUtils.fmn(this.w, this.x, 2.0F * this.w * this.z);
+        float size = 2.0F * MathUtils.fmn(this.r, this.i, 2.0F * this.r * this.k);
         float halfSize = (float) Math.asin(size / dot);
 
         if(Math.abs(size) > 0.999F * dot)
         {
-            return new Vec3f(2.0F * (float) Math.atan2(this.x, this.w), halfSize, 0.0F);
+            return new Vector3f(2.0F * (float) Math.atan2(this.i, this.r), halfSize, 0.0F);
         }
 
-        return new Vec3f(
-                (float) Math.atan2(2.0F * MathUtils.fma(this.y, this.z, 2.0F * this.x * this.w), (wSq - xSq - ySq + zSq)),
+        return new Vector3f(
+                (float) Math.atan2(2.0F * MathUtils.fma(this.j, this.k, 2.0F * this.i * this.r), (wSq - xSq - ySq + zSq)),
                 halfSize,
-                (float) Math.atan2(2.0F * MathUtils.fma(this.x, this.y, 2.0F * this.w * this.z), (wSq + xSq - ySq - zSq))
+                (float) Math.atan2(2.0F * MathUtils.fma(this.i, this.j, 2.0F * this.r * this.k), (wSq + xSq - ySq - zSq))
         );
     }
 
@@ -58,25 +62,25 @@ public class QuaternionMixin
      * @reason Introduce FMA
      */
     @Overwrite
-    public Vec3f toEulerXyz()
+    public Vector3f toXYZ()
     {
-        float wSq = this.w * this.w;
-        float xSq = this.x * this.x;
-        float ySq = this.y * this.y;
-        float zSq = this.z * this.z;
+        float wSq = this.r * this.r;
+        float xSq = this.i * this.i;
+        float ySq = this.j * this.j;
+        float zSq = this.k * this.k;
         float dot = wSq + xSq + ySq + zSq;
-        float size = 2.0F * MathUtils.fmn(this.w, this.x, 2.0F * this.w * this.z);
+        float size = 2.0F * MathUtils.fmn(this.r, this.i, 2.0F * this.r * this.k);
         float halfSize = (float) Math.asin(size / dot);
 
         if(Math.abs(size) > 0.999F * dot)
         {
-            return new Vec3f(halfSize, 2.0F * (float) Math.atan2(this.y, this.w), 0.0F);
+            return new Vector3f(halfSize, 2.0F * (float) Math.atan2(this.j, this.r), 0.0F);
         }
 
-        return new Vec3f(
+        return new Vector3f(
                 halfSize,
-                (float) Math.atan2(2.0F * MathUtils.fma(this.x, this.z, 2.0F * this.y * this.w), (wSq - xSq - ySq + zSq)),
-                (float) Math.atan2(2.0F * MathUtils.fma(this.x, this.y, 2.0F * this.w * this.z), (wSq - xSq + ySq - zSq))
+                (float) Math.atan2(2.0F * MathUtils.fma(this.i, this.k, 2.0F * this.j * this.r), (wSq - xSq - ySq + zSq)),
+                (float) Math.atan2(2.0F * MathUtils.fma(this.i, this.j, 2.0F * this.r * this.k), (wSq - xSq + ySq - zSq))
         );
     }
 
@@ -87,21 +91,21 @@ public class QuaternionMixin
     @Overwrite
     public void normalize()
     {
-        float dot = MathUtils.fma(this.x, this.x, MathUtils.fma(this.y, this.y, MathUtils.fma(this.z, this.z, this.w * this.w)));
+        float dot = MathUtils.fma(this.i, this.i, MathUtils.fma(this.j, this.j, MathUtils.fma(this.k, this.k, this.r * this.r)));
 
         if(dot > 1.0E-5)
         {
-            this.x = 0.0F;
-            this.y = 0.0F;
-            this.z = 0.0F;
-            this.w = 0.0F;
+            this.i = 0.0F;
+            this.j = 0.0F;
+            this.k = 0.0F;
+            this.r = 0.0F;
             return;
         }
 
-        float norm = MathHelper.fastInverseSqrt(dot);
-        this.x *= norm;
-        this.y *= norm;
-        this.z *= norm;
-        this.w *= norm;
+        float norm = Mth.fastInvSqrt(dot);
+        this.i *= norm;
+        this.j *= norm;
+        this.k *= norm;
+        this.r *= norm;
     }
 }

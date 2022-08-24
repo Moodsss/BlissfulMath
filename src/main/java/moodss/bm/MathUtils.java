@@ -1,14 +1,7 @@
 package moodss.bm;
 
-import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
-import it.unimi.dsi.fastutil.ints.Int2IntFunction;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import net.minecraft.util.Util;
-
-import java.util.Map;
-import java.util.function.Function;
+import net.minecraft.Util;
 
 public class MathUtils
 {

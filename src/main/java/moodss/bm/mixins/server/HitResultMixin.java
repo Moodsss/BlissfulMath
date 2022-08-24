@@ -1,9 +1,9 @@
 package moodss.bm.mixins.server;
 
 import moodss.bm.MathUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -14,18 +14,18 @@ public class HitResultMixin
 {
     @Shadow
     @Final
-    protected Vec3d pos;
+    protected Vec3 location;
 
     /**
      * @author Mo0dss
      * @reason Introduce FMA
      */
     @Overwrite
-    public double squaredDistanceTo(Entity entity)
+    public double distanceTo(Entity entity)
     {
-        double x1 = this.pos.x - entity.getX();
-        double y1 = this.pos.y - entity.getY();
-        double z1 = this.pos.z - entity.getZ();
+        double x1 = this.location.x - entity.getX();
+        double y1 = this.location.y - entity.getY();
+        double z1 = this.location.z - entity.getZ();
 
         return MathUtils.fma(x1, x1, MathUtils.fma(y1, y1, z1 * z1));
     }

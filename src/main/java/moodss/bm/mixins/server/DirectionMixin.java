@@ -1,7 +1,7 @@
 package moodss.bm.mixins.server;
 
 import moodss.bm.MathUtils;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -12,21 +12,21 @@ public class DirectionMixin
 {
     @Shadow
     @Final
-    private static Direction[] ALL;
+    private static Direction[] VALUES;
 
     /**
      * @author Mo0dss
      * @reason Introduce FMA
      */
     @Overwrite
-    public static Direction getFacing(float x, float y, float z)
+    public static Direction getNearest(float x, float y, float z)
     {
         Direction currentFacing = Direction.NORTH;
         float prevRotation = Float.MIN_VALUE;
 
-        for(Direction direction : ALL)
+        for(Direction direction : VALUES)
         {
-            float rotation = MathUtils.fma(x, direction.getOffsetX(), MathUtils.fma(y, direction.getOffsetY(), z * direction.getOffsetZ()));
+            float rotation = MathUtils.fma(x, direction.getStepX(), MathUtils.fma(y, direction.getStepY(), z * direction.getStepZ()));
 
             if(rotation > prevRotation)
             {
